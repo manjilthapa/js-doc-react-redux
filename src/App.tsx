@@ -1,26 +1,50 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useCallback, useEffect, useState } from "react"
+import * as esbuild from "esbuild-wasm"
+import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin"
+import { fetchPlugin } from "./plugins/fetch-plugin"
 
-function App() {
+const App = () => {
+  const [input, setInput] = useState("")
+  const [code, setCode] = useState("")
+
+  useEffect(() => {
+    const startService = async () => {
+      await esbuild.initialize({
+        wasmURL: `https://unpkg.com/esbuild-wasm@latest/esbuild.wasm`,
+      })
+    }
+    startService()
+  }, [])
+
+  const onClick = useCallback(async () => {
+    if (!esbuild.context) {
+      return
+    }
+    // const result = await esbuild.transform(input, {
+    //   loader: "jsx",
+    //   target: "es2015",
+    // })
+    const result = await esbuild.build({
+      entryPoints: ["index.js"],
+      bundle: true,
+      write: false,
+      plugins: [unpkgPathPlugin(), fetchPlugin(input)],
+      define: {
+        "process.env.NODE_ENV": '"production"',
+        global: "window",
+      },
+    })
+    setCode(result.outputFiles[0].text)
+  }, [input])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <textarea placeholder="Type here" onChange={(e) => setInput(e.target.value)} value={input} />
+      <div>
+        <button onClick={onClick}>Submit</button>
+      </div>
+      <pre>{code}</pre>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
