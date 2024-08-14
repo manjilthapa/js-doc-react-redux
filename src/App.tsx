@@ -1,11 +1,11 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import * as esbuild from "esbuild-wasm"
 import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin"
 import { fetchPlugin } from "./plugins/fetch-plugin"
 
 const App = () => {
+  const iframeRef = useRef<HTMLIFrameElement>(null)
   const [input, setInput] = useState("")
-  const [code, setCode] = useState("")
 
   useEffect(() => {
     const startService = async () => {
@@ -16,14 +16,34 @@ const App = () => {
     startService()
   }, [])
 
+  const html = `
+  <html>
+  <head></head>
+  <body>
+  <div id="root"></div>
+  </body>
+  <script>
+  window.addEventListener("message", (event) => {
+    try {
+      eval(event.data)
+      } catch (err) {
+        const root = document.getElementById("root")
+        root.innerHTML = "<div style='color: red;'><h4>Runtime Error</h4>" + err + "</div>"
+        console.error(err)
+      }
+        })
+  </script>
+  </html>
+`
   const onClick = useCallback(async () => {
-    if (!esbuild.context) {
+    if (!esbuild.context || !iframeRef.current) {
       return
     }
     // const result = await esbuild.transform(input, {
     //   loader: "jsx",
     //   target: "es2015",
     // })
+    iframeRef.current.srcdoc = html
     const result = await esbuild.build({
       entryPoints: ["index.js"],
       bundle: true,
@@ -34,15 +54,16 @@ const App = () => {
         global: "window",
       },
     })
-    setCode(result.outputFiles[0].text)
-  }, [input])
+    iframeRef.current.contentWindow?.postMessage(result.outputFiles[0].text, "*")
+  }, [html, input])
+
   return (
     <div>
       <textarea placeholder="Type here" onChange={(e) => setInput(e.target.value)} value={input} />
       <div>
         <button onClick={onClick}>Submit</button>
       </div>
-      <pre>{code}</pre>
+      <iframe ref={iframeRef} title="preview" srcDoc={html} sandbox="allow-scripts" />
     </div>
   )
 }
