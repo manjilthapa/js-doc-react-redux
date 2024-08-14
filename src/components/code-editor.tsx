@@ -3,6 +3,7 @@ import React, { useRef } from "react"
 import prettier from "prettier"
 import babelPlugin from "prettier/plugins/babel"
 import esTree from "prettier/plugins/estree"
+import "./code-editor.css"
 
 const CodeEditor: React.FC<{ value: string; onChange: (v: string) => void }> = ({ value, onChange }) => {
   const editorRef = useRef<any>(null)
@@ -24,12 +25,14 @@ const CodeEditor: React.FC<{ value: string; onChange: (v: string) => void }> = (
       useTabs: false,
       singleQuote: true,
     })
-    editorRef.current.setValue(formatted)
+    editorRef.current.setValue(formatted.replace(/\n$/, ""))
   }
 
   return (
-    <div>
-      <button onClick={onFormatClick}>Format</button>
+    <div className="editor-wrapper">
+      <button className="button button-format is-primary is-small" onClick={onFormatClick}>
+        Format
+      </button>
 
       <Editor
         height="500px"
