@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import * as esbuild from "esbuild-wasm"
-import { unpkgPathPlugin } from "./plugins/unpkg-path-plugin"
-import { fetchPlugin } from "./plugins/fetch-plugin"
+import { unpkgPathPlugin } from "../plugins/unpkg-path-plugin"
+import { fetchPlugin } from "../plugins/fetch-plugin"
+import CodeEditor from "./code-editor"
 
-const App = () => {
+const CodeShell = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const [input, setInput] = useState("")
 
@@ -59,6 +60,7 @@ const App = () => {
 
   return (
     <div>
+      <CodeEditor value={input} onChange={(v) => setInput(v)} />
       <textarea placeholder="Type here" onChange={(e) => setInput(e.target.value)} value={input} />
       <div>
         <button onClick={onClick}>Submit</button>
@@ -68,4 +70,4 @@ const App = () => {
   )
 }
 
-export default App
+export default CodeShell
