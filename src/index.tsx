@@ -1,6 +1,5 @@
 import ReactDOM from "react-dom/client"
-import CodeShell from "./components/code-shell"
-import "bulmaswatch/darkly/bulmaswatch.min.css"
+import App from "./App"
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
-root.render(<CodeShell />)
+root.render(<App />)
