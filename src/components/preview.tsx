@@ -1,3 +1,4 @@
+import "./preview.css"
 import { useRef, useEffect, FC } from "react"
 
 interface PreviewProps {
@@ -14,19 +15,16 @@ const Preview: FC<PreviewProps> = ({ code }) => {
     }
 
     iframeRefValue.srcdoc = html
-    iframeRefValue.addEventListener("load", () => {
+    setTimeout(() => {
       iframeRefValue?.contentWindow?.postMessage(code, "*")
-    })
-    return () => {
-      if (iframeRefValue) {
-        iframeRefValue.removeEventListener("load", () => {
-          iframeRefValue?.contentWindow?.postMessage(code, "*")
-        })
-      }
-    }
+    }, 50)
   }, [code])
 
-  return <iframe title="preview" ref={iframe} sandbox="allow-scripts" srcDoc={html} />
+  return (
+    <div className="preview-wrapper">
+      <iframe title="preview" ref={iframe} sandbox="allow-scripts" srcDoc={html} />
+    </div>
+  )
 }
 
 export default Preview

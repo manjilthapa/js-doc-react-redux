@@ -35,7 +35,7 @@ const CodeEditor: React.FC<{ value: string; onChange: (v: string) => void }> = (
       </button>
 
       <Editor
-        height="500px"
+        height="100%"
         value={value}
         defaultLanguage="javascript"
         defaultValue="const a = 1;"
