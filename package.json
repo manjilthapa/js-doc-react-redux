@@ -11,6 +11,7 @@
     "@types/node": "^16.18.104",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
+    "@uiw/react-md-editor": "^4.0.4",
     "axios": "^1.7.3",
     "bulmaswatch": "^0.8.1",
     "esbuild-wasm": "^0.23.0",
