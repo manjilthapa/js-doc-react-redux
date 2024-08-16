@@ -9,19 +9,30 @@ export const setupBundle = () => {
     worker: true,
   })
 }
+
 const bundle = async (rawCode: string) => {
   await waiting
-  const result = await esbuild.build({
-    entryPoints: ["index.js"],
-    bundle: true,
-    write: false,
-    plugins: [unpkgPathPlugin(), fetchPlugin(rawCode)],
-    define: {
-      "process.env.NODE_ENV": '"production"',
-      global: "window",
-    },
-  })
-  return result.outputFiles[0].text
+  try {
+    const result = await esbuild.build({
+      entryPoints: ["index.js"],
+      bundle: true,
+      write: false,
+      plugins: [unpkgPathPlugin(), fetchPlugin(rawCode)],
+      define: {
+        "process.env.NODE_ENV": '"production"',
+        global: "window",
+      },
+    })
+    return {
+      error: "",
+      code: result.outputFiles[0].text,
+    }
+  } catch (err: any) {
+    return {
+      error: err.message,
+      code: "",
+    }
+  }
 }
 
 export default bundle
