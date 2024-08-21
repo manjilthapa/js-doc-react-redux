@@ -5,7 +5,7 @@ import { fetchPlugin } from "./plugins/fetch-plugin"
 let waiting: Promise<void>
 export const setupBundle = () => {
   waiting = esbuild.initialize({
-    wasmURL: `https://unpkg.com/esbuild-wasm@latest/esbuild.wasm`,
+    wasmURL: `https://unpkg.com/esbuild-wasm@0.23.0/esbuild.wasm`,
     worker: true,
   })
 }
