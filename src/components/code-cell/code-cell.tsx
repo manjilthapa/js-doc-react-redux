@@ -6,6 +6,7 @@ import { Resizable } from "./resizable"
 import { Cell } from "../../state"
 import { useActions } from "../../hooks/use-actions"
 import { useTypedSelector } from "../../hooks/use-typed-selector"
+import "./code-cell.css"
 
 setupBundle()
 const CodeCell: FC<{ cell: Cell }> = ({ cell }) => {
@@ -26,7 +27,17 @@ const CodeCell: FC<{ cell: Cell }> = ({ cell }) => {
         <Resizable direction="horizontal">
           <CodeEditor value={cell.content} onChange={(v) => updateCell(cell.id, v)} />
         </Resizable>
-        {bundle && <Preview code={bundle.code} error={bundle.err} />}
+        <div className="progress-wrapper">
+          {!bundle || bundle.loading ? (
+            <div className="progress-cover">
+              <progress className="progress is-small is-primary" max="100">
+                Loading
+              </progress>
+            </div>
+          ) : (
+            <Preview code={bundle.code} error={bundle.err} />
+          )}
+        </div>
       </div>
     </Resizable>
   )
