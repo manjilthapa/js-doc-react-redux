@@ -7,19 +7,21 @@ import { Cell } from "../../state"
 import { useActions } from "../../hooks/use-actions"
 import { useTypedSelector } from "../../hooks/use-typed-selector"
 import "./code-cell.css"
+import { useCumulativeCode } from "../../hooks/use-cumulative-code"
 
 setupBundle()
 const CodeCell: FC<{ cell: Cell }> = ({ cell }) => {
   const { updateCell, createBundle } = useActions()
   const bundle = useTypedSelector(({ bundles }) => bundles?.[cell.id])
+  const cumulativeCode = useCumulativeCode(cell.id)
   useEffect(() => {
     const timer = setTimeout(async () => {
-      createBundle(cell.id, cell.content)
+      createBundle(cell.id, cumulativeCode)
     }, 1000)
     return () => {
       clearTimeout(timer)
     }
-  }, [cell.content, cell.id, createBundle])
+  }, [cell.id, createBundle, cumulativeCode])
 
   return (
     <Resizable direction="vertical">
